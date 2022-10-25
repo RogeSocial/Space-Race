@@ -47,10 +47,13 @@ class Player extends Entity {
         this.speed = 300;
     }
     draw() {
-        context.beginPath();
-        context.fillStyle = this.color;
-        context.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-        context.fill();
+        let image = new Image();
+        image.src = 'images/rocket.png'
+        context.drawImage(image, this.position.x, this.position.y, 50, 100)
+        // context.beginPath();
+        // context.fillStyle = this.color;
+        // context.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+        // context.fill();
     }
 
 
@@ -60,7 +63,7 @@ class Ball extends Entity {
     constructor(position, velocity) {
         super(position, velocity);
 
-        this.radius = 15;
+        this.radius = 10;
         this.color = "white";
     }
 
@@ -76,9 +79,9 @@ class Ball extends Entity {
         context.fill();
     }
 }
-
-let player1 = new Player(new Position(200, 700), new Velocity(0, 0));
-let player2 = new Player(new Position(600, 700), new Velocity(0, 0));
+let player = new Player();
+let player1 = new Player(new Position(200, height - player.radius - 1), new Velocity(0, 0));
+let player2 = new Player(new Position(600, height - player.radius - 1), new Velocity(0, 0));
 let newBall = new Ball()
 
 function handleEntitiesMovement(entity, deltaTime) {
@@ -182,23 +185,33 @@ function handlePlayerMovement(player1, deltaTime) {
     }
 }*/
 
+
 let tickCount = 0;
+let CountDooku = 0; //Easter egg ge oss ej ig tack //Puss och kram från grupp 8!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<3
 let lastTick = Date.now();
 
 function tick() {
     let currentTick = Date.now();
     let deltaTime = (currentTick - lastTick) / 1000;
     lastTick = currentTick;
-
+    CountDooku++;
     tickCount++;
-    if (tickCount >= 50) {
+    if (tickCount >= 80) {
         tickCount = 0;
-        let position = {x: 0, y: Math.random() * height };
+        let position = {x: 0, y: Math.random() * height - 200};
         let velocity = {x: 20, y: 0};
-        let radius = 15;
         balls.push(new Ball(position, velocity))
+        
     }
 
+    if (CountDooku >= 80) {
+        CountDooku = 0;
+        let position = {x: width, y: Math.random() * height - 200 };
+        let velocity = {x: -20, y: 0};
+        balls.push(new Ball(position, velocity))
+        
+    }
+    
     context.fillStyle = "black";
     context.fillRect(0, 0, width, height);
     // tickBalls(deltaTime);
@@ -208,8 +221,9 @@ function tick() {
         
         ball.move();
         ball.draw();
+        
     }
-
+    
     player1.draw();
     player2.draw();
 
