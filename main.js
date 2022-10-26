@@ -1,5 +1,7 @@
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
+let scores = document.createElement("score");
+let playerscore = canvas.appendChild(scores);
 
 let height = canvas.height;
 let width = canvas.width;
@@ -82,9 +84,9 @@ class Ball extends Entity {
 
     removeBall() {
         if (this.position.x >= width || this.position.x <= 0) {
-            balls.splice([], 1)
+             balls.splice([], 1)
         }
-        return this.removeBall;
+         return this.removeBall;
     }
 
 }
@@ -109,6 +111,7 @@ function isEntityOutside(entity) {
 function playerinGoal(player) {
     if (player.position.y < (player.height / 2)){
         player.score++;
+        
         return player.position.y = 700;
     }
 }
@@ -177,27 +180,17 @@ function handlePlayerMovement(player1, deltaTime) {
         player1.position.y += speed * deltaTime;
     }
 }
+function drawPoints() {
+    context.fillStyle = "white";
+    context.font = "48px serif";
+    context.textAlign = "center";
+    context.fillText(player1.score, (canvas.width / 2) - 100, canvas.height - 70);
 
-/* function tickBalls(deltaTime) {
-    for (let i = 0; i < balls.length; i++) {
-        let ball = newBall
-        ball = balls[i];
-
-        ball.draw();
-        
-        handleEntitiesMovement(ball, deltaTime);
-        if (isEntityOutside(ball)) {
-            balls.splice(i, 1);
-            continue;
-        }
-        if (isColliding(ball, player1)) {
-            player1.position.y = 100;
-        }
-        if (isColliding(ball, player2)) {
-            player2.position.y = 100;
-        }
-    }
-}*/
+    context.fillStyle = "white";
+    context.font = "48px serif";
+    context.textAlign = "center";
+    context.fillText(player2.score, (canvas.width / 2) + 100, canvas.height - 70);
+}
 
 let tickCount = 0;
 let tickCount2 = 0;
@@ -216,7 +209,7 @@ function tick() {
         balls.push(new Ball(position, velocity))
 
     }
-
+    
     if (tickCount2 >= 50) {
         tickCount2 = 0;
         let position = { x: width, y: Math.random() * height - 200 };
@@ -227,7 +220,6 @@ function tick() {
 
     context.fillStyle = "black";
     context.fillRect(0, 0, width, height);
-    // tickBalls(deltaTime);
 
     for (let i = 0; i < balls.length; i++) {
         let ball = balls[i];
@@ -237,22 +229,22 @@ function tick() {
         ball.removeBall();
         if (isColliding(ball, player1)) {
             player1.position.y = 700;
+            balls.splice(i, 1);
         }
 
         if (isColliding(ball, player2)) {
             player2.position.y = 700;
+            balls.splice(i, 1);
         }
         
     }
-    playerinGoal(player1)
+    
+    drawPoints();
+    playerinGoal(player1);
+    playerinGoal(player2);
     player1.draw();
     player2.draw();
 
-    /*if (tickCount % 200 === 0) {
-        let ball = new Ball(new Position(10, 10), new Velocity(10, 0))
-        balls.push(ball);
-    }*/
-    
     handlePlayerMovement(player1, deltaTime);
     handlePlayerMovement(player2, deltaTime);
 
@@ -270,10 +262,10 @@ function generateNumberBetween(min, max, fraction) {
 function generateEnemyPosition() {
     let side = generateNumberBetween(1, 2, false);
 
-    if (side === 1) { // vänster sida
+    if (side === 1) {
         return new Position(generateNumberBetween(0, height, true), 0)
 
-    } else if (side === 2) { // höger sida
+    } else if (side === 2) { 
         return new Position(width, generateNumberBetween(0, height, true), 0)
 
     }
