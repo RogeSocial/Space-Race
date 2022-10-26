@@ -3,6 +3,9 @@ const context = canvas.getContext("2d");
 
 let height = canvas.height;
 let width = canvas.width;
+let halfWidth = width / 2;
+let halfHeight = height / 2;
+
 let asteroids = [];
 let balls = [];
 
@@ -41,19 +44,17 @@ class Player extends Entity {
     constructor(position, velocity) {
         super(position, velocity);
         this.score = 0;
-        this.radius = 20;
+        this.radius = 50;
         this.color = "red";
         this.keys = new Keys();
         this.speed = 300;
+        this.width = 50;
+        this.height = 100;
     }
     draw() {
         let image = new Image();
         image.src = 'images/rocket.png'
-        context.drawImage(image, this.position.x, this.position.y, 50, 100)
-        // context.beginPath();
-        // context.fillStyle = this.color;
-        // context.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-        // context.fill();
+        context.drawImage(image, this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height)
     }
 
 
@@ -78,11 +79,19 @@ class Ball extends Entity {
         context.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
         context.fill();
     }
+
+    removeBall() {
+        if (this.position.x >= width || this.position.x <= 0) {
+            balls.splice([], 1)
+        }
+        return this.removeBall;
+    }
+
 }
 let player = new Player();
-let player1 = new Player(new Position(200, height - player.radius - 1), new Velocity(0, 0));
-let player2 = new Player(new Position(600, height - player.radius - 1), new Velocity(0, 0));
-let newBall = new Ball()
+let player1 = new Player(new Position(200, 700), new Velocity(0, 0));
+let player2 = new Player(new Position(600, 700), new Velocity(0, 0));
+let newBall = new Ball();
 
 function handleEntitiesMovement(entity, deltaTime) {
 
@@ -95,6 +104,13 @@ function isEntityOutside(entity) {
         entity.position.x > width + entity.radius ||
         entity.position.y < -entity.radius ||
         entity.position.y > height + entity.radius);
+
+}
+function playerinGoal(player) {
+    if (player.position.y < (player.height / 2)){
+        player.score++;
+        return player.position.y = 700;
+    }
 }
 
 function isColliding(ball, player) {
@@ -162,8 +178,6 @@ function handlePlayerMovement(player1, deltaTime) {
     }
 }
 
-
-
 /* function tickBalls(deltaTime) {
     for (let i = 0; i < balls.length; i++) {
         let ball = newBall
@@ -185,45 +199,52 @@ function handlePlayerMovement(player1, deltaTime) {
     }
 }*/
 
-
 let tickCount = 0;
-let CountDooku = 0; //Easter egg ge oss ej ig tack //Puss och kram från grupp 8!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<3
+let tickCount2 = 0;
 let lastTick = Date.now();
 
 function tick() {
     let currentTick = Date.now();
     let deltaTime = (currentTick - lastTick) / 1000;
     lastTick = currentTick;
-    CountDooku++;
+    tickCount2++;
     tickCount++;
-    if (tickCount >= 80) {
+    if (tickCount >= 50) {
         tickCount = 0;
-        let position = {x: 0, y: Math.random() * height - 200};
-        let velocity = {x: 20, y: 0};
+        let position = { x: 0, y: Math.random() * height - 200 };
+        let velocity = { x: 20, y: 0 };
         balls.push(new Ball(position, velocity))
-        
+
     }
 
-    if (CountDooku >= 80) {
-        CountDooku = 0;
-        let position = {x: width, y: Math.random() * height - 200 };
-        let velocity = {x: -20, y: 0};
+    if (tickCount2 >= 50) {
+        tickCount2 = 0;
+        let position = { x: width, y: Math.random() * height - 200 };
+        let velocity = { x: -20, y: 0 };
         balls.push(new Ball(position, velocity))
-        
+
     }
-    
+
     context.fillStyle = "black";
     context.fillRect(0, 0, width, height);
     // tickBalls(deltaTime);
-    
+
     for (let i = 0; i < balls.length; i++) {
         let ball = balls[i];
-        
+
         ball.move();
         ball.draw();
+        ball.removeBall();
+        if (isColliding(ball, player1)) {
+            player1.position.y = 700;
+        }
+
+        if (isColliding(ball, player2)) {
+            player2.position.y = 700;
+        }
         
     }
-    
+    playerinGoal(player1)
     player1.draw();
     player2.draw();
 
@@ -231,7 +252,7 @@ function tick() {
         let ball = new Ball(new Position(10, 10), new Velocity(10, 0))
         balls.push(ball);
     }*/
-
+    
     handlePlayerMovement(player1, deltaTime);
     handlePlayerMovement(player2, deltaTime);
 
