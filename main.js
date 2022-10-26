@@ -8,6 +8,7 @@ let width = canvas.width;
 let halfWidth = width / 2;
 let halfHeight = height / 2;
 
+let shootBall = null;
 let asteroids = [];
 let balls = [];
 
@@ -35,10 +36,12 @@ class Entity {
 
     }
 }
+
 class Keys {
     constructor() {
         this.up = false;
         this.down = false;
+        this.shoot = false;
     }
 }
 
@@ -52,13 +55,14 @@ class Player extends Entity {
         this.speed = 300;
         this.width = 50;
         this.height = 100;
+        this.startTime = Date.now;
     }
+
     draw() {
         let image = new Image();
         image.src = 'images/rocket.png'
         context.drawImage(image, this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height)
     }
-
 
 }
 
@@ -84,12 +88,59 @@ class Ball extends Entity {
 
     removeBall() {
         if (this.position.x >= width || this.position.x <= 0) {
-             balls.splice([], 1)
+            balls.splice([], 1)
         }
-         return this.removeBall;
+        return this.removeBall;
     }
 
 }
+class ShootBall extends Ball {
+    constructor(position, velocity) {
+        super(position, velocity);
+        this.color = "red";
+        this.stroke = "darkred";
+        this.startTime = Date.now();
+    }
+
+    move() {
+        this.position.x += this.velocity.x / 10;
+        this.position.y += this.velocity.y / 10;
+    }
+
+    draw() {
+        context.beginPath();
+        context.fillStyle = this.color;
+        context.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+        context.fill();
+    }
+
+    removeBall() {
+        if (this.position.x >= width || this.position.x <= 0) {
+            balls.splice([], 1)
+        }
+        return this.removeBall;
+    }
+
+    // shoot() {
+    //     if (player1.keys.shoot) {
+    //         this.velocity.dx += 20;
+    //         if (tickShootBall(shootBall, deltaTime)){
+    //             shootBall = null;
+    //         }
+    //     }
+
+    //     if (player2.keys.shoot) {
+    //         this.velocity.dx -= 20;
+    //         if(tickShootBall(shootBall, deltaTime)){
+    //             shootBall = null;
+    //         }
+    //     }
+    // }
+
+}
+
+let shootBall1 = null;
+let shootBall2 = null;
 let player = new Player();
 let player1 = new Player(new Position(200, 700), new Velocity(0, 0));
 let player2 = new Player(new Position(600, 700), new Velocity(0, 0));
@@ -101,6 +152,17 @@ function handleEntitiesMovement(entity, deltaTime) {
     entity.position.y += entity.velocity.dy * deltaTime;
 }
 
+function tickShootBall(shootBall, deltaTime) {
+    if (shootBall === null) {
+        return false;
+    }
+    shootBall.draw();
+    // shootBall.move();
+    handleEntitiesMovement(shootBall, deltaTime)
+
+    return Date.now() > (shootBall.startTime + 3000);
+}
+
 function isEntityOutside(entity) {
     return (entity.position.x < -entity.radius ||
         entity.position.x > width + entity.radius ||
@@ -109,9 +171,11 @@ function isEntityOutside(entity) {
 
 }
 function playerinGoal(player) {
-    if (player.position.y < (player.height / 2)){
+    if (player.position.y < (player.height / 2)) {
         player.score++;
-        
+
+
+
         return player.position.y = 700;
     }
 }
@@ -151,10 +215,19 @@ function handlePlayer2KeyDown(event) {
 }
 
 function handlePlayer1KeyUp(event) {
-    if (event.key == 'w') {
+    if (event.key === 'w') {
         player1.keys.up = false;
-    } else if (event.key == 's') {
+    } else if (event.key === 's') {
         player1.keys.down = false;
+    } else if (event.key === 'e') {
+        if (shootBall1 !== null) {
+            return;
+        }
+        let velocity = new Velocity(10, 0);
+        velocity.dx = 1000;
+        console.log("test")
+        let position = new Position(player1.position.x, player1.position.y);
+        shootBall1 = new ShootBall(position, velocity);
     }
 }
 
@@ -163,8 +236,23 @@ function handlePlayer2KeyUp(event) {
         player2.keys.up = false;
     } else if (event.key == 'l') {
         player2.keys.down = false;
+    } else if (event.key == 'i') {
+        if (shootBall2 !== null) {
+            return;
+        }
+        let velocity = new Velocity(-10, 0);
+        velocity.dx = -1000;
+
+
+        let position = new Position(player2.position.x, player2.position.y)
+        shootBall2 = new ShootBall(position, velocity)
+        if (isColliding(shootBall2, player1)) {
+            player1.position.y = 700;
+            shootBall2 = !null;
+        }
     }
 }
+
 window.addEventListener('keypress', handlePlayer1KeyDown);
 window.addEventListener('keypress', handlePlayer2KeyDown);
 window.addEventListener('keyup', handlePlayer1KeyUp);
@@ -180,6 +268,7 @@ function handlePlayerMovement(player1, deltaTime) {
         player1.position.y += speed * deltaTime;
     }
 }
+
 function drawPoints() {
     context.fillStyle = "white";
     context.font = "48px serif";
@@ -209,7 +298,7 @@ function tick() {
         balls.push(new Ball(position, velocity))
 
     }
-    
+
     if (tickCount2 >= 50) {
         tickCount2 = 0;
         let position = { x: width, y: Math.random() * height - 200 };
@@ -236,15 +325,23 @@ function tick() {
             player2.position.y = 700;
             balls.splice(i, 1);
         }
-        
+
+
     }
-    
-    drawPoints();
-    playerinGoal(player1);
-    playerinGoal(player2);
     player1.draw();
     player2.draw();
 
+    if (tickShootBall(shootBall1, deltaTime)) {
+        shootBall1 = null;
+    }
+    if (tickShootBall(shootBall2, deltaTime)) {
+        shootBall2 = null;
+    }
+    drawPoints();
+    playerinGoal(player1);
+    playerinGoal(player2);
+    
+    // shootBall.shoot();
     handlePlayerMovement(player1, deltaTime);
     handlePlayerMovement(player2, deltaTime);
 
@@ -265,7 +362,7 @@ function generateEnemyPosition() {
     if (side === 1) {
         return new Position(generateNumberBetween(0, height, true), 0)
 
-    } else if (side === 2) { 
+    } else if (side === 2) {
         return new Position(width, generateNumberBetween(0, height, true), 0)
 
     }
