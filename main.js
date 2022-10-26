@@ -154,12 +154,40 @@ function handleEntitiesMovement(entity, deltaTime) {
 
 function tickShootBall(shootBall, deltaTime) {
     if (shootBall === null) {
+        
         return false;
-    }
-    shootBall.draw();
-    // shootBall.move();
-    handleEntitiesMovement(shootBall, deltaTime)
 
+    }
+    
+    // shootBall.move();
+    
+
+    if (shootBall2 !== null){
+    if (isColliding(shootBall2, player1)) {
+        // console.log("Hello")
+        
+        player1.position.y = 700;
+        // shootBall2 = null;
+        shootBall2.position.y = undefined;
+        shootBall2.position.x = undefined;
+        
+        
+    }
+}
+if (shootBall1 !== null){
+    if(isColliding(shootBall1, player2)){
+        // console.log("Hello")
+        player2.position.y = 700
+
+        shootBall1.position.y = undefined;
+        shootBall1.position.x = undefined;
+        //shootBall1 = null;
+        
+        
+    }
+}
+    handleEntitiesMovement(shootBall, deltaTime);
+    shootBall.draw();
     return Date.now() > (shootBall.startTime + 3000);
 }
 
@@ -242,14 +270,12 @@ function handlePlayer2KeyUp(event) {
         }
         let velocity = new Velocity(-10, 0);
         velocity.dx = -1000;
-
+        
 
         let position = new Position(player2.position.x, player2.position.y)
         shootBall2 = new ShootBall(position, velocity)
-        if (isColliding(shootBall2, player1)) {
-            player1.position.y = 700;
-            shootBall2 = !null;
-        }
+        
+
     }
 }
 
@@ -331,6 +357,7 @@ function tick() {
     player1.draw();
     player2.draw();
 
+
     if (tickShootBall(shootBall1, deltaTime)) {
         shootBall1 = null;
     }
@@ -340,7 +367,7 @@ function tick() {
     drawPoints();
     playerinGoal(player1);
     playerinGoal(player2);
-    
+
     // shootBall.shoot();
     handlePlayerMovement(player1, deltaTime);
     handlePlayerMovement(player2, deltaTime);
