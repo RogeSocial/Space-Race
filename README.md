@@ -19,4 +19,4 @@ Player 2 controls <br>
 [RogeSocial](https://github.com/RogeSocial) <br>
 [SimonLeBueno123](https://github.com/SimonLeBuono123) <br>
 [rimdagic](https://github.com/rimdagic) <br>
-[EdvinN1](https://github.com/EdvinN1) 
+[EdvinN1](https://github.com/EdvinN1) <br>
