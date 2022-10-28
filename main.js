@@ -8,7 +8,6 @@ import {
 
 import { tick } from "./game.js"
 
-
 window.addEventListener('keypress', handlePlayer1KeyDown);
 window.addEventListener('keypress', handlePlayer2KeyDown);
 window.addEventListener('keyup', handlePlayer1KeyUp);
