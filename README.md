@@ -15,7 +15,7 @@ Player 2 controls <br>
 "I" for shooting <br> 
 
 ## **Contributors**
-
+ 
 [RogeSocial](https://github.com/RogeSocial) <br>
 [SimonLeBueno123](https://github.com/SimonLeBuono123) <br>
 [rimdagic](https://github.com/rimdagic) <br>
