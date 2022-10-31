@@ -73,7 +73,7 @@ export function tick() {
 
     console.log(tickTime)
 
-    if (tickTime >= 0.5) {
+    if (tickTime >= 1) {
         tickTime = 0;
         let position = { x: 0, y: Math.random() * height - 200 };
         let velocity = { x: 200, y: 0 };
