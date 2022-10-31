@@ -17,9 +17,9 @@ export class Ball extends Entity {
         this.color = "white";
     }
 
-    move() {
-        this.position.x += this.velocity.x / 10;
-        this.position.y += this.velocity.y / 10;
+    move(deltaTime) {
+        this.position.x += this.velocity.x * deltaTime;
+        this.position.y += this.velocity.y * deltaTime;
     }
 
     draw() {

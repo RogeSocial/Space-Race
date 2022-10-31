@@ -59,30 +59,33 @@ function tickShootBall(shootBall, deltaTime) {
     return Date.now() > (shootBall.startTime + 3000);
 }
 
-let tickCount = 0;
-let tickCount2 = 0;
+let tickTime = 0;
+let tickTime2 = 0;
 let lastTick = Date.now();
 
 export function tick() {
     let currentTick = Date.now();
     let deltaTime = (currentTick - lastTick) / 1000;
     lastTick = currentTick;
-    tickCount2++;
-    tickCount++;
-    if (tickCount >= 50) {
-        tickCount = 0;
+
+    tickTime2 += deltaTime;
+    tickTime += deltaTime;
+
+    console.log(tickTime)
+
+    if (tickTime >= 0.5) {
+        tickTime = 0;
         let position = { x: 0, y: Math.random() * height - 200 };
-        let velocity = { x: 20, y: 0 };
+        let velocity = { x: 200, y: 0 };
         balls.push(new Ball(position, velocity))
 
     }
 
-    if (tickCount2 >= 50) {
-        tickCount2 = 0;
+    if (tickTime2 >= 0.5) {
+        tickTime2 = 0;
         let position = { x: width, y: Math.random() * height - 200 };
-        let velocity = { x: -20, y: 0 };
+        let velocity = { x: -200, y: 0 };
         balls.push(new Ball(position, velocity))
-
     }
 
     context.fillStyle = "black";
@@ -91,8 +94,7 @@ export function tick() {
     for (let i = 0; i < balls.length; i++) {
         let ball = balls[i];
 
-
-        ball.move();
+        ball.move(deltaTime);
         ball.draw();
         ball.removeBall();
         if (isColliding(ball, player1)) {
